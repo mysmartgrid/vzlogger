@@ -46,7 +46,8 @@ if(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}/.git/HEAD")
 endif(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}/.git/HEAD")
 
 ctest_start(${_ctest_type})
-ctest_update(SOURCE ${CTEST_SOURCE_DIRECTORY})
+ctest_update(SOURCE ${CTEST_SOURCE_DIRECTORY} RETURN_VALUE ret)
+message("===> Update returns: ${ret}")
 ctest_submit(PARTS Update)
 
 execute_process(
@@ -85,8 +86,10 @@ endif( STAGING_DIR)
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE build_res)
 message("====> BUILD: ${build_res}")
 
-ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE test_res)
-message("====> TESTS: ${test_res}")
+if( NOT CMAKE_TOOLCHAIN_FILE )
+  ctest_test(BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE test_res)
+  message("====> TESTS: ${test_res}")
+endif( NOT CMAKE_TOOLCHAIN_FILE )
 
 ctest_submit(RETURN_VALUE res)
 
